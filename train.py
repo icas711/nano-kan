@@ -45,8 +45,9 @@ def get_args():
     p.add_argument("--beta2", type=float, default=0.95)
     p.add_argument("--grad_clip", type=float, default=1.0)
     # Logging / eval
-    p.add_argument("--eval_interval", type=int, default=250)
+    p.add_argument("--eval_interval", type=int, default=100)
     p.add_argument("--eval_iters", type=int, default=200)
+    p.add_argument("--patience", type=int, default=10, help="Early stopping: stop after N evals without improvement")
     p.add_argument("--log_interval", type=int, default=10)
     p.add_argument("--out_dir", type=str, default="out")
     # System
@@ -147,6 +148,7 @@ def main():
 
     # ---- Training loop -------------------------------------------------
     best_val_loss = float("inf")
+    no_improve_count = 0
     t0 = time.time()
 
     for it in range(args.max_iters):
@@ -161,6 +163,7 @@ def main():
             print(f"step {it}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
             if losses["val"] < best_val_loss:
                 best_val_loss = losses["val"]
+                no_improve_count = 0
                 checkpoint = {
                     "model": model.state_dict(),
                     "optimizer": optimizer.state_dict(),
@@ -170,6 +173,11 @@ def main():
                 }
                 torch.save(checkpoint, os.path.join(args.out_dir, "ckpt.pt"))
                 print(f"  → saved checkpoint (val_loss={best_val_loss:.4f})")
+            else:
+                no_improve_count += 1
+                if args.patience > 0 and no_improve_count >= args.patience:
+                    print(f"Early stopping at iter {it} (no improvement for {args.patience} evals)")
+                    break
 
         # Forward / backward with gradient accumulation
         optimizer.zero_grad(set_to_none=True)

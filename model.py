@@ -98,9 +98,10 @@ class HybridKANMLP(nn.Module):
             grid_size=config.kan_grid_size,
             spline_order=config.kan_spline_order,
         )
+        self.kan_dropout = nn.Dropout(config.dropout)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.mlp(x) + self.kan(x)
+        return self.mlp(x) + self.kan_dropout(self.kan(x))
 
 
 class Block(nn.Module):
