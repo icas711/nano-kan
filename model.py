@@ -23,10 +23,10 @@ from kan import KANLinear
 class GPTConfig:
     block_size: int = 256
     vocab_size: int = 50257
-    n_layer: int = 6
+    n_layer: int = 4
     n_head: int = 4
-    n_embd: int = 256
-    dropout: float = 0.1
+    n_embd: int = 128
+    dropout: float = 0.2
     bias: bool = False
     # KAN hyper-params
     kan_grid_size: int = 5

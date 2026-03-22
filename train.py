@@ -25,11 +25,11 @@ def get_args():
     # Data
     p.add_argument("--data_dir", type=str, default="data/shakespeare")
     # Model
-    p.add_argument("--n_layer", type=int, default=6)
+    p.add_argument("--n_layer", type=int, default=4)
     p.add_argument("--n_head", type=int, default=4)
-    p.add_argument("--n_embd", type=int, default=256)
+    p.add_argument("--n_embd", type=int, default=128)
     p.add_argument("--block_size", type=int, default=256)
-    p.add_argument("--dropout", type=float, default=0.1)
+    p.add_argument("--dropout", type=float, default=0.2)
     p.add_argument("--kan_grid_size", type=int, default=5)
     p.add_argument("--kan_spline_order", type=int, default=3)
     # Training
@@ -40,7 +40,7 @@ def get_args():
     p.add_argument("--min_lr", type=float, default=1e-4)
     p.add_argument("--warmup_iters", type=int, default=100)
     p.add_argument("--lr_decay_iters", type=int, default=5000)
-    p.add_argument("--weight_decay", type=float, default=1e-1)
+    p.add_argument("--weight_decay", type=float, default=2e-1)
     p.add_argument("--beta1", type=float, default=0.9)
     p.add_argument("--beta2", type=float, default=0.95)
     p.add_argument("--grad_clip", type=float, default=1.0)
