@@ -26,7 +26,7 @@ class GPTConfig:
     n_layer: int = 4
     n_head: int = 4
     n_embd: int = 128
-    dropout: float = 0.2
+    dropout: float = 0.3
     bias: bool = False
     # KAN hyper-params
     kan_grid_size: int = 5
@@ -85,8 +85,9 @@ class MLP(nn.Module):
 
 class HybridKANMLP(nn.Module):
     """
-    Parallel hybrid: out = MLP(x) + KAN(x).
+    Parallel hybrid: out = MLP(x) + alpha * KAN(x).
     MLP gives capacity via width; KAN gives expressiveness via learnable splines.
+    alpha scales KAN contribution to prevent overfitting on small datasets.
     """
 
     def __init__(self, config: GPTConfig):
@@ -99,9 +100,10 @@ class HybridKANMLP(nn.Module):
             spline_order=config.kan_spline_order,
         )
         self.kan_dropout = nn.Dropout(config.dropout)
+        self.kan_alpha = nn.Parameter(torch.tensor(0.1))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.mlp(x) + self.kan_dropout(self.kan(x))
+        return self.mlp(x) + self.kan_alpha * self.kan_dropout(self.kan(x))
 
 
 class Block(nn.Module):
@@ -190,7 +192,7 @@ class GPT(nn.Module):
 
         if targets is not None:
             logits = self.lm_head(x)  # (B, T, vocab_size)
-            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1)
+            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1, label_smoothing=0.1)
         else:
             logits = self.lm_head(x[:, [-1], :])  # only last position for inference
             loss = None

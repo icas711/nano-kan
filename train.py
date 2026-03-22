@@ -29,7 +29,7 @@ def get_args():
     p.add_argument("--n_head", type=int, default=4)
     p.add_argument("--n_embd", type=int, default=128)
     p.add_argument("--block_size", type=int, default=256)
-    p.add_argument("--dropout", type=float, default=0.2)
+    p.add_argument("--dropout", type=float, default=0.3)
     p.add_argument("--kan_grid_size", type=int, default=5)
     p.add_argument("--kan_spline_order", type=int, default=3)
     # Training
