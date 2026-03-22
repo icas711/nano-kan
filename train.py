@@ -33,8 +33,8 @@ def get_args():
     p.add_argument("--kan_grid_size", type=int, default=5)
     p.add_argument("--kan_spline_order", type=int, default=3)
     # Training
-    p.add_argument("--batch_size", type=int, default=64)
-    p.add_argument("--grad_accum_steps", type=int, default=1)
+    p.add_argument("--batch_size", type=int, default=32)
+    p.add_argument("--grad_accum_steps", type=int, default=2)
     p.add_argument("--max_iters", type=int, default=5000)
     p.add_argument("--lr", type=float, default=1e-3)
     p.add_argument("--min_lr", type=float, default=1e-4)
