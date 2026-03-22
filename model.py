@@ -23,10 +23,10 @@ from kan import KANLinear
 class GPTConfig:
     block_size: int = 256
     vocab_size: int = 50257
-    n_layer: int = 4
+    n_layer: int = 6
     n_head: int = 4
-    n_embd: int = 128
-    dropout: float = 0.3
+    n_embd: int = 256
+    dropout: float = 0.1
     bias: bool = False
     # KAN hyper-params
     kan_grid_size: int = 5
@@ -192,7 +192,7 @@ class GPT(nn.Module):
 
         if targets is not None:
             logits = self.lm_head(x)  # (B, T, vocab_size)
-            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1, label_smoothing=0.1)
+            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1)
         else:
             logits = self.lm_head(x[:, [-1], :])  # only last position for inference
             loss = None
